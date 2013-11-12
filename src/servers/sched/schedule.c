@@ -216,19 +216,19 @@ int do_start_scheduling(message *m_ptr)
 				&parent_nr_n)) != OK)
 			return rv;		
 
-//		if (!memcmp(tempProc[rmp->endpoint].p_name, procs[0], 4 * sizeof(char))) {	
-//			for (int i = 0; i < 10; i++) {
-//				if (!strcmp(tempProc[rmp->endpoint].p_name, procs[i])) {
-					// SET ALL THE INFORMATION
-//					break;	
-//				} 	
-//			}
-//		} else {
-//
-//			printf("Mem copy comparison was false \n");
+		sys_getproctab((struct proc *) &tempProc);
+
+		const char* currentName = tempProc[_ENDPOINT_P(rmp->endpoint) + 5].p_name;
+		unsigned realRuntime = tempProc[_ENDPOINT_P(rmp->endpoint) + 5].p_cycles;		
+		double alpha = 0.5;
+
+		if(!strncmp("proc", currentName, 4)) {
+			rmp->priority = schedproc[parent_nr_n].priority;
+			rmp->time_slice = alpha * realRuntime + (1 - alpha) * rmp->time_slice;
+		} else {
 			rmp->priority = schedproc[parent_nr_n].priority;
 			rmp->time_slice = schedproc[parent_nr_n].time_slice;
-//		}	
+		}	
 		break;
 		
 	default: 
