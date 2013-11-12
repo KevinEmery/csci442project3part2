@@ -9,3 +9,17 @@ We have spent 15 hours on this submission.
 
 Hours Spent on the Final Submission
 We have spent 9 hours on this submission.
+
+
+
+pseudo code for SPN
+
+Array[10] = {0}
+
+Array[rmp.p_name #] <-  alpha * p_cycles? + (1 - alpha) * Array[rmp.p_name #]
+
+for items in Array {
+	rearrange proc 1-10 based on values in Array
+	highest values de/enqueued first 
+	kernal call to dequeue and enqueue
+}
