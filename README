@@ -5,21 +5,36 @@ Ryan McManus
 Timm Nygren
 
 Hours Spent on the Intermediate Submission
-We have spent 15 hours on this submission.
+We spent 15 hours on this submission.
 
 Hours Spent on the Final Submission
-We have spent 9 hours on this submission.
+David, Ryan, and Timm have spent 15 hours on this submission.
+Kevin has spent 11 hours on this submission. The smaller amount of time is due to scheduling conflicts with the rest of the group
+
+Unusual/Interesting Features:
+There is nothing we did in this project that we consider unusual or interesting, as there is nothing we did that goes outside of the scope of the assigned project due to time constraints.
+
+Hardest Part of The Assignment:
+Getting minix to consistently run code developed on other machines, and anything to do with sys_vircopy.
+
+Additional comments:
+In future iterations of this project, it would make things easier if students were told what functionality is already implemented vs. what they have to do from scratch.
+
+Short Essay:
+Because we struggled to complete Part I of this assignment, we were not able to write code to retrieve the process table and display it in the GUI. For this reason, we will not be talking about our implementation of that here in the README file.
+
+Our team implemented the shortest process next (SPN) scheduling algorithm by modifying the schedule_process function found in src/servers/sched/schedule.c. After information is set for all processes according to minix's standard scheduling algorithm, we then take over and run our own process to schedule the processes named proc1 through proc10. We do this using the following procedure. To begin, we grab the process table using sys_getproctab. From that table, we grab the name of the process (rmp) that is being scheduled. Using that name, we iterate through the given sjf array and, if the name of rmp matches one of the processes in sjf, then we set the endpoint and predicted burst for that process.
+
+With that process complete, we then move to scheduling that process relative to all of the other fake processes. This is achieved through the use of a custom-made bubble-sort algorithm, which sorts all of the fake processes, from the shortest to the largest. Once the processes are sorted, we use a call to sys_qptab, which makes a kernel call to enqueue a process. This is called on all of the processes in sjf, from the longest one first to the shortest one last. Once this is completed, the shortest process is at the front of the line to be run and the longest process is at the end, thereby implemented shortest process next.
+
+How did we prove it:
+Because we were unable to successfully print out status updates on the process run times, we used the display of the GUI from Part I to prove that we had implemented a SPN algorithm successfully. In reference to the snapshots from that simulation, we have taken screenshots that can be found in the images directory located outside of the src folder. Snapshot 16 shows proc6 having just been moved into the 8th queue, behind proc1 and proc3. However, if you move forward to Snapshot 17, you can see that proc6 is moved to be in front of proc1 and proc3. This would not have happened under the minix scheduling algorithm, and is therefore a byproduct of our work towards implemented SPN. Similarly, moving from Snapshot 19 to Snapshot 20 shows that proc8 is moved in front of proc3, and Snapshots 22 and 23 show proc9 moving in front of proc3 and proc8. This would not have occured without the work we did in our algorithm, and based on all of our work the only thing that could occur is a system where the shortest process is moved to the front of it's respective queue.
+
+
+Performance Analysis:
+In order to do a performance analysis of our scheduling algorithm as compared to the minix scheduling algorithm, we timed the simulation five different times, with and without our scheduling algorithm. The results of this timing can be found in the images directory, in the image entitled "Timing Analysis". As you can see there, our algorithm was slightly slower than the built-in algorithm. However, this can be explained by the fact that our algorithm includes a bubble-sort of all the fake processes every time one of them is scheduled, which is an O(n^2) operation. While this is a relatively small sort on only 10 items, it adds up over time. As a result the minix scheduler is faster because it does not have to perform this sort. Additionally, because the minix scheduler is a round-robin scheduler, it is impossible for starvation to occur. The same thing cannot be said about our SPN scheduler, which does have the potential for starvation for longer processes.
+
+Having said that, our algorithm brings with it some advantages. Because ours is a SPN algorithm, it allows shorter processes to run ahead of the longer ones and allows them to finish up quicker than longer processes. Much like, if you're at the grocery store and you have a full cart of groceries while the person behind you only has one small drink, you would let them go ahead of you. This encourages shorter processes instead of longer ones.
 
 
 
-pseudo code for SPN
-
-Array[10] = {0}
-
-Array[rmp.p_name #] <-  alpha * p_cycles? + (1 - alpha) * Array[rmp.p_name #]
-
-for items in Array {
-	rearrange proc 1-10 based on values in Array
-	highest values de/enqueued first 
-	kernal call to dequeue and enqueue
-}
